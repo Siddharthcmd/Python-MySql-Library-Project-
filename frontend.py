@@ -183,23 +183,19 @@ def validateLogin():
         ll1 = Label(tkWindow, text="Wrong Entry!").grid(row=2, column=2)
 
 
-# window
 tkWindow = Tk()
 tkWindow.geometry('400x150')
-tkWindow.title('Tkinter Login Form - pythonexamples.org')
+tkWindow.title('Library Database')
 
-# username label and text entry box
 usernameLabel = Label(tkWindow, text="User Name").grid(row=0, column=0)
 username = StringVar()
 usernameEntry = Entry(tkWindow, textvariable=username).grid(row=0, column=1)
 
-# password label and password entry box
 passwordLabel = Label(tkWindow, text="Password").grid(row=1, column=0)
 password = StringVar()
 passwordEntry = Entry(tkWindow, textvariable=password,
                       show='*').grid(row=1, column=1)
 
-# login button
 loginButton = ttk.Button(tkWindow, text="Login",
                          command=validateLogin).grid(row=2, column=0)
 
