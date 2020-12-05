@@ -29,7 +29,8 @@ def guiPy():
 
     def searchBook():
         list1.delete(0, END)
-        for row in backend.search(bookId_txt.get(), title_txt.get(), author_txt.get(), year_txt.get(), publisher_txt.get()):
+        for row in backend.search(bookId_txt.get(),
+         title_txt.get(), author_txt.get(), year_txt.get(), publisher_txt.get()):
             list1.insert(END, row)
 
     def addBook():

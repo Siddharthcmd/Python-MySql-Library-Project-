@@ -1,6 +1,5 @@
 import pymysql
 
-
 def connect():
     mydb = pymysql.connect(host="localhost",
                            user="root", password="misraa123", database="sidd")
@@ -34,7 +33,8 @@ def search(id="", title="", author="", year="", publisher=""):
                            user="root", password="misraa123", database="sidd")
     cur = mydb.cursor()
     searchBook = ("select * from books where id = '"+id+"' or title = '"+title +
-                  "' or author = '"+author+"' or year = '"+year+"' or publiser = '"+publisher+"'")
+                  "' or author = '"+author+"' or year = '"+year+
+                  "' or publiser = '"+publisher+"'")
     cur.execute(searchBook)
     row = cur.fetchall()
     mydb.close()
@@ -56,7 +56,8 @@ def update(id, title, author, year, publisher, quantity):
                            user="root", password="misraa123", database="sidd")
     cur = mydb.cursor()
     updateBook = ("update books set title = '"+title+"', author = '" +
-                  author+"' , year = '"+year+"' , publiser = '"+publisher+"' , quantity = '"+quantity+"' where id='"+id+"'")
+                  author+"' , year = '"+year+"' , publiser = '"+
+                  publisher+"' , quantity = '"+quantity+"' where id='"+id+"'")
     cur.execute(updateBook)
     mydb.commit()
     mydb.close()
