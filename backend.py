@@ -2,14 +2,14 @@ import pymysql
 
 def connect():
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="sidd")
+                           user="root", password="misraa123", database="sid1")
     mydb.close()
 
 
 def insert(id, title, author, year, publisher, quantity):
 
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="sidd")
+                           user="root", password="misraa123", database="sid1")
     cur = mydb.cursor()
     insertBooks = "insert into books values('"+id + "','"+title+"','" + \
         author+"','" + year+"','"+publisher+"', '"+quantity+"')"
@@ -20,7 +20,7 @@ def insert(id, title, author, year, publisher, quantity):
 
 def view():
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="sidd")
+                           user="root", password="misraa123", database="sid1")
     cur = mydb.cursor()
     cur.execute("select * from books")
     rows = cur.fetchall()
@@ -30,11 +30,11 @@ def view():
 
 def search(id="", title="", author="", year="", publisher=""):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="sidd")
+                           user="root", password="misraa123", database="sid1")
     cur = mydb.cursor()
     searchBook = ("select * from books where id = '"+id+"' or title = '"+title +
                   "' or author = '"+author+"' or year = '"+year+
-                  "' or publiser = '"+publisher+"'")
+                  "' or publisher = '"+publisher+"'")
     cur.execute(searchBook)
     row = cur.fetchall()
     mydb.close()
@@ -43,7 +43,7 @@ def search(id="", title="", author="", year="", publisher=""):
 
 def delete(id):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="sidd")
+                           user="root", password="misraa123", database="sid1")
     cur = mydb.cursor()
     deleteBook = ("delete from books where id = '"+str(id)+"'")
     cur.execute(deleteBook)
@@ -53,10 +53,10 @@ def delete(id):
 
 def update(id, title, author, year, publisher, quantity):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="sidd")
+                           user="root", password="misraa123", database="sid1")
     cur = mydb.cursor()
     updateBook = ("update books set title = '"+title+"', author = '" +
-                  author+"' , year = '"+year+"' , publiser = '"+
+                  author+"' , year = '"+year+"' , publisher = '"+
                   publisher+"' , quantity = '"+quantity+"' where id='"+id+"'")
     cur.execute(updateBook)
     mydb.commit()
@@ -68,7 +68,7 @@ def update(id, title, author, year, publisher, quantity):
 
 def viewData():
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="sidd")
+                           user="root", password="misraa123", database="sid1")
     cur = mydb.cursor()
     cur.execute("select * from issueBooks")
     rows = cur.fetchall()
@@ -79,7 +79,7 @@ def viewData():
 def insertIssue(cardNumber, borrowerName, id):
 
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="sidd")
+                           user="root", password="misraa123", database="sid1")
     cur = mydb.cursor()
     insertdata = "insert into issueBooks values('" + \
         cardNumber + "','"+borrowerName+"','"+id+"')"
@@ -90,7 +90,7 @@ def insertIssue(cardNumber, borrowerName, id):
 
 def updateIssueBook(id, quantity):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="sidd")
+                           user="root", password="misraa123", database="sid1")
     cur = mydb.cursor()
     updateBook = ("update books set quantity = '" +
                   str(int(quantity)-1)+"' where id='"+str(id)+"'")
@@ -101,7 +101,7 @@ def updateIssueBook(id, quantity):
 
 def deleteIssueBook(cardNumber, id):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="sidd")
+                           user="root", password="misraa123", database="sid1")
     cur = mydb.cursor()
 
     # to obtain book quantity from books table

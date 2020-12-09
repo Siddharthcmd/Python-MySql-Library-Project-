@@ -1,6 +1,7 @@
 from backend import viewData
 import backend
 from tkinter import ttk
+from tkinter import Toplevel, Button, Tk, Menu  
 from tkinter import *
 
 
@@ -48,8 +49,26 @@ def guiPy():
         backend.update(bookId_txt.get(), title_txt.get(), author_txt.get(),
                        year_txt.get(), publisher_txt.get(), quantity_txt.get())
         viewBook()
+    
+    def hello():  
+        print("hello!") 
 
     window = Tk()
+
+    # create a toplevel menu  
+    menubar = Menu(window) 
+    file = Menu(menubar, tearoff=0)  
+    file.add_command(label="view all books",command=viewBook)  
+    file.add_command(label="search book",command=searchBook)  
+    file.add_command(label="add book",command=addBook)  
+    file.add_command(label="update selected",command=updateBook) 
+    file.add_command(label="delete selected",command=deleteBook) 
+    file.add_separator()
+    file.add_command(label="Exit", command=window.quit)  
+  
+    menubar.add_cascade(label="File", menu=file) 
+    # display the menu  
+    window.config(menu=menubar)  
 
     l1 = Label(window, text="bookId")
     l1.grid(row=0, column=0)
@@ -88,26 +107,26 @@ def guiPy():
 
     list1.bind('<<ListboxSelect>>', selectRow)
 
-    sb1 = Scrollbar(window)
-    sb1.grid(row=4, column=2, rowspan=6)
+    #sb1 = Scrollbar(window)
+    #sb1.grid(row=4, column=2, rowspan=6)
 
-    list1.configure(yscrollcommand=sb1.set)
-    sb1.configure(command=list1.yview)
+    #list1.configure(yscrollcommand=sb1.set)
+    #sb1.configure(command=list1.yview)
 
     b1 = ttk.Button(window, text="View All Books",
-                    width=12, command=viewBook)
+                    width=15, command=viewBook)
     b1.grid(row=3, column=0)
-    b2 = ttk.Button(window, text="Search Entry", width=12, command=searchBook)
+    b2 = ttk.Button(window, text="Search Entry", width=15, command=searchBook)
     b2.grid(row=3, column=1)
-    b3 = ttk.Button(window, text="Add Entry", width=12, command=addBook)
+    b3 = ttk.Button(window, text="Add Entry", width=15, command=addBook)
     b3.grid(row=3, column=2)
     b4 = ttk.Button(window, text="Update Selected",
-                    width=12, command=updateBook)
+                    width=15, command=updateBook)
     b4.grid(row=3, column=3)
     b5 = ttk.Button(window, text="Delete Selected",
-                    width=12, command=deleteBook)
+                    width=15, command=deleteBook)
     b5.grid(row=3, column=4)
-    b6 = ttk.Button(window, text="Close", width=12, command=window.destroy)
+    b6 = ttk.Button(window, text="Close", width=15, command=window.destroy)
     b6.grid(row=3, column=5)
 
     "---------------------------------BOOK issue----------------------------------"
@@ -160,28 +179,24 @@ def guiPy():
 
     list2.bind('<<ListboxSelect>>', selectRow1)
 
-    sb2 = Scrollbar(window)
-    sb2.grid(row=9, column=5, rowspan=6)
-
-    list1.configure(yscrollcommand=sb1.set)
-    sb1.configure(command=list1.yview)
-
-    b7 = ttk.Button(window, text="View Data", width=12, command=viewData)
+    b7 = ttk.Button(window, text="View Data", width=15, command=viewData)
     b7.grid(row=8, column=3)
-    b8 = ttk.Button(window, text="Issue Book", width=12, command=issueBook)
+    b8 = ttk.Button(window, text="Issue Book", width=15, command=issueBook)
     b8.grid(row=8, column=4)
-    b9 = ttk.Button(window, text="Return Book", width=12, command=returnBook)
+    b9 = ttk.Button(window, text="Return Book", width=15, command=returnBook)
     b9.grid(row=8, column=5)
 
     window.mainloop()
 
 
+    "---------------------------------Login id block----------------------------------"
 def validateLogin():
     if(username.get() == "siddharth" and password.get() == "misraa123"):
         tkWindow.destroy()
         guiPy()
     else:
-        ll1 = Label(tkWindow, text="Wrong Entry!").grid(row=2, column=2)
+        ll1 = Label(tkWindow, text="Incorrect username or password"
+        ,fg="white",bg="red").grid(row=2, column=1)
 
 
 tkWindow = Tk()
@@ -201,3 +216,4 @@ loginButton = ttk.Button(tkWindow, text="Login",
                          command=validateLogin).grid(row=2, column=0)
 
 tkWindow.mainloop()
+
