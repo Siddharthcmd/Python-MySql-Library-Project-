@@ -3,9 +3,11 @@ import backend
 from tkinter import ttk
 from tkinter import Toplevel, Button, Tk, Menu  
 from tkinter import *
+from tkinter import messagebox 
 
 
 def guiPy():
+
     def selectRow(Event):
         global sid
         index = list1.curselection()
@@ -22,6 +24,7 @@ def guiPy():
         e5.insert(END, sid[4])
         e6.delete(0, END)
         e6.insert(END, sid[5])
+    
 
     def viewBook():
         list1.delete(0, END)
@@ -35,11 +38,10 @@ def guiPy():
             list1.insert(END, row)
 
     def addBook():
-        backend.insert(bookId_txt.get(), title_txt.get(), author_txt.get(),
-                       year_txt.get(), publisher_txt.get(), quantity_txt.get())
+        backend.insert(bookId_txt.get(), title_txt.get(), author_txt.get(),year_txt.get(), publisher_txt.get())
         list1.delete(0, END)
-        list1.insert(END, (bookId_txt.get(), title_txt.get(), author_txt.get(),
-                           year_txt.get(), publisher_txt.get(), quantity_txt.get()))
+        list1.insert(END, (bookId_txt.get(), title_txt.get(), 
+        author_txt.get(),year_txt.get(), publisher_txt.get()))
 
     def deleteBook():
         backend.delete(sid[0])
@@ -50,23 +52,100 @@ def guiPy():
                        year_txt.get(), publisher_txt.get(), quantity_txt.get())
         viewBook()
     
-    def hello():  
-        print("hello!") 
+    "////////////////////////////////////////////////////////////////////////////////////"
+    #----------------------------------BRANCH DETAIL---------------------------------
+    "////////////////////////////////////////////////////////////////////////////////////"
 
+    def branchWindow():
+
+        window = Toplevel(Window)
+
+
+        l1 = Label(window, text="Branch ID").grid(row=1,column=5)
+        l2 = Label(window, text="Branch Name").grid(row=2,column=5)
+        l3 = Label(window, text="Address").grid(row=3,column=5)
+
+        e1 = Entry(window).grid(row=1,column=6)
+        e2 = Entry(window).grid(row=2,column=6)
+        e3 = Entry(window).grid(row=3,column=6)
+
+        list1 = Listbox(window, height=10, width=45)
+        list1.grid(row=1, column=2, rowspan=6, columnspan=2)
+
+        b1 = ttk.Button(window, text="View All Branches",
+                        width=17)
+        b1.grid(row=1, column=0)
+        b2 = ttk.Button(window, text="Add Branch", width=17)
+        b2.grid(row=2, column=0)
+        b3 = ttk.Button(window, text="Delete Branch", width=15)
+        b3.grid(row=3, column=0)
+        b4 = ttk.Button(window, text="Done", width=17, command=window.destroy)
+        b4.grid(row=4, column=0)
+        
+        window.mainloop()    
+    
+    
+    "////////////////////////////////////////////////////////////////////////////////////"
+    #----------------------------------PUBLISHER DETAIL---------------------------------
+    "////////////////////////////////////////////////////////////////////////////////////"
+    
+    def publisherWindow():  
+        def addPublisher():
+            #print("siddharth")
+            #print(name.get(),number.get(),address.get())
+            backend.insertPublisherData(name.get(),number.get(),address.get())
+            list1.delete(0,END)
+            list1.insert(END,(name.get(),number.get(),address.get()))
+
+        def viewPublisher():
+            list1.delete(0,END)
+            for row in backend.viewPublisherData():
+                list1.insert(END,row) 
+        #def deletePublisher():
+        
+        pubwindow = Toplevel(window)
+
+    
+        l1 = Label(pubwindow, text="Name").grid(row=1,column=5)
+        l2 = Label(pubwindow, text="Number").grid(row=2,column=5)
+        l3 = Label(pubwindow, text="Address").grid(row=3,column=5)
+        name = StringVar()
+        e1 = Entry(pubwindow,textvariable=name).grid(row=1,column=6)
+        number = StringVar()
+        e2 = Entry(pubwindow,textvariable=number).grid(row=2,column=6)
+        address = StringVar()
+        e3 = Entry(pubwindow,textvariable=address).grid(row=3,column=6)
+    
+        list1 = Listbox(pubwindow, height=10, width=45)
+        list1.grid(row=1, column=2, rowspan=6, columnspan=2)
+
+        b1 = ttk.Button(pubwindow, text="View All Publisher",
+                        width=17,command=viewPublisher)
+        b1.grid(row=1, column=0)
+        b2 = ttk.Button(pubwindow, text="Add Publisher", width=17,command=addPublisher)
+        b2.grid(row=2, column=0)
+        b3 = ttk.Button(pubwindow, text="Delete Publisher", width=15)
+        b3.grid(row=3, column=0)
+        b4 = ttk.Button(pubwindow, text="Done", width=17, command=pubwindow.destroy)
+        b4.grid(row=4, column=0)
+        
+        pubwindow.mainloop()
+    
+    "////////////////////////////////////////////////////////////////////////////////////"
+    #----------------------------------MAIN WINDOW---------------------------------
+    "////////////////////////////////////////////////////////////////////////////////////"
+     
     window = Tk()
 
     # create a toplevel menu  
     menubar = Menu(window) 
-    file = Menu(menubar, tearoff=0)  
-    file.add_command(label="view all books",command=viewBook)  
-    file.add_command(label="search book",command=searchBook)  
-    file.add_command(label="add book",command=addBook)  
-    file.add_command(label="update selected",command=updateBook) 
-    file.add_command(label="delete selected",command=deleteBook) 
-    file.add_separator()
-    file.add_command(label="Exit", command=window.quit)  
+    filemenu = Menu(menubar, tearoff=0)  
+    filemenu.add_command(label="Publisher Details",command=publisherWindow)  
+    filemenu.add_command(label="Branches Details",command=branchWindow)  
+    filemenu.add_separator()
+    filemenu.add_command(label="Exit", command=window.quit)  
   
-    menubar.add_cascade(label="File", menu=file) 
+    menubar.add_cascade(label="View", menu=filemenu) 
     # display the menu  
     window.config(menu=menubar)  
 
@@ -107,12 +186,6 @@ def guiPy():
 
     list1.bind('<<ListboxSelect>>', selectRow)
 
-    #sb1 = Scrollbar(window)
-    #sb1.grid(row=4, column=2, rowspan=6)
-
-    #list1.configure(yscrollcommand=sb1.set)
-    #sb1.configure(command=list1.yview)
-
     b1 = ttk.Button(window, text="View All Books",
                     width=15, command=viewBook)
     b1.grid(row=3, column=0)
@@ -120,6 +193,8 @@ def guiPy():
     b2.grid(row=3, column=1)
     b3 = ttk.Button(window, text="Add Entry", width=15, command=addBook)
     b3.grid(row=3, column=2)
+    
+
     b4 = ttk.Button(window, text="Update Selected",
                     width=15, command=updateBook)
     b4.grid(row=3, column=3)
@@ -189,7 +264,7 @@ def guiPy():
     window.mainloop()
 
 
-    "---------------------------------Login id block----------------------------------"
+'''    "---------------------------------Login id block----------------------------------"
 def validateLogin():
     if(username.get() == "siddharth" and password.get() == "misraa123"):
         tkWindow.destroy()
@@ -217,3 +292,5 @@ loginButton = ttk.Button(tkWindow, text="Login",
 
 tkWindow.mainloop()
 
+'''
+guiPy()
