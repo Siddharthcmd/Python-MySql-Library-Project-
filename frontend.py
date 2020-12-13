@@ -8,6 +8,10 @@ from tkinter import messagebox
 
 def guiPy():
 
+    "////////////////////////////////////////////////////////////////////////////////////"
+    #----------------------------------BOOK DETAILS---------------------------------
+    "////////////////////////////////////////////////////////////////////////////////////"
+
     def selectRow(Event):
         global sid
         index = list1.curselection()
@@ -22,8 +26,8 @@ def guiPy():
         e4.insert(END, sid[3])
         e5.delete(0, END)
         e5.insert(END, sid[4])
-        e6.delete(0, END)
-        e6.insert(END, sid[5])
+        #e6.delete(0, END)
+        #e6.insert(END, sid[5])
     
 
     def viewBook():
@@ -38,17 +42,30 @@ def guiPy():
             list1.insert(END, row)
 
     def addBook():
-        backend.insert(bookId_txt.get(), title_txt.get(), author_txt.get(),year_txt.get(), publisher_txt.get())
+        backend.insert(branchId_txt.get(),bookId_txt.get(), title_txt.get(),
+        author_txt.get(),year_txt.get(), publisher_txt.get(),quantity_txt.get())
         list1.delete(0, END)
         list1.insert(END, (bookId_txt.get(), title_txt.get(), 
-        author_txt.get(),year_txt.get(), publisher_txt.get()))
-
+        author_txt.get(),year_txt.get(), publisher_txt.get(),quantity_txt.get()))
+        e1.delete(0, END)
+        e2.delete(0, END)
+        e3.delete(0, END)
+        e4.delete(0, END)
+        e5.delete(0, END)
+        e6.delete(0, END)
     def deleteBook():
         backend.delete(sid[0])
         viewBook()
+        e1.delete(0, END)
+        e2.delete(0, END)
+        e3.delete(0, END)
+        e4.delete(0, END)
+        e5.delete(0, END)
+        e6.delete(0, END)
+
 
     def updateBook():
-        backend.update(bookId_txt.get(), title_txt.get(), author_txt.get(),
+        backend.update(branchId_txt.get(), bookId_txt.get(), title_txt.get(), author_txt.get(),
                        year_txt.get(), publisher_txt.get(), quantity_txt.get())
         viewBook()
     
@@ -58,31 +75,64 @@ def guiPy():
 
     def branchWindow():
 
-        window = Toplevel(Window)
+        def selectRow2(Event):
+            global sid2
+            index = bList.curselection()
+            sid2 = bList.get(index)
+            be1.delete(0, END)
+            be1.insert(END, sid2[0])
+            be2.delete(0, END)
+            be2.insert(END, sid2[1])
+            be3.delete(0, END)
+            be3.insert(END, sid2[2])    
 
+        def addBranch():
+            backend.insertBranchData(branch_id.get(),name.get(),address.get())
+            bList.delete(0,END)
+            bList.insert(END,(branch_id.get(),name.get(),address.get()))
 
-        l1 = Label(window, text="Branch ID").grid(row=1,column=5)
-        l2 = Label(window, text="Branch Name").grid(row=2,column=5)
-        l3 = Label(window, text="Address").grid(row=3,column=5)
+        def viewBranch():
+            bList.delete(0,END)
+            for row in backend.viewBranchData():
+                bList.insert(END,row) 
+        
+        def deleteBranch():
+            backend.deleteBranchData(sid2[0])
+            viewBranch()  
+        
+        brawindow = Toplevel(window)
 
-        e1 = Entry(window).grid(row=1,column=6)
-        e2 = Entry(window).grid(row=2,column=6)
-        e3 = Entry(window).grid(row=3,column=6)
+    
+        l1 = Label(brawindow, text="Branch Id").grid(row=1,column=5)
+        l2 = Label(brawindow, text="Name").grid(row=2,column=5)
+        l3 = Label(brawindow, text="Address").grid(row=3,column=5)
+        
+        branch_id = StringVar()
+        be1 = Entry(brawindow,textvariable=branch_id)
+        be1.grid(row=1,column=6)
+        name = StringVar()
+        be2 = Entry(brawindow,textvariable=name)
+        be2.grid(row=2,column=6)
+        address = StringVar()
+        be3 = Entry(brawindow,textvariable=address)
+        be3.grid(row=3,column=6)
+    
+        bList = Listbox(brawindow, height=10, width=45)
+        bList.grid(row=1, column=2, rowspan=6, columnspan=2)
 
-        list1 = Listbox(window, height=10, width=45)
-        list1.grid(row=1, column=2, rowspan=6, columnspan=2)
+        bList.bind('<<ListboxSelect>>', selectRow2)
 
-        b1 = ttk.Button(window, text="View All Branches",
-                        width=17)
+        b1 = ttk.Button(brawindow, text="View All Branches",
+                        width=17,command=viewBranch)
         b1.grid(row=1, column=0)
-        b2 = ttk.Button(window, text="Add Branch", width=17)
+        b2 = ttk.Button(brawindow, text="Add Branch", width=17,command=addBranch)
         b2.grid(row=2, column=0)
-        b3 = ttk.Button(window, text="Delete Branch", width=15)
+        b3 = ttk.Button(brawindow, text="Delete Branch", width=17,command=deleteBranch)
         b3.grid(row=3, column=0)
-        b4 = ttk.Button(window, text="Done", width=17, command=window.destroy)
+        b4 = ttk.Button(brawindow, text="Done", width=17, command=brawindow.destroy)
         b4.grid(row=4, column=0)
         
-        window.mainloop()    
+        brawindow.mainloop() 
     
     
     "////////////////////////////////////////////////////////////////////////////////////"
@@ -90,18 +140,32 @@ def guiPy():
     "////////////////////////////////////////////////////////////////////////////////////"
     
     def publisherWindow():  
+        
+        def selectRow1(Event):
+            global sid1
+            index = pList.curselection()
+            sid1 = pList.get(index)
+            ee1.delete(0, END)
+            ee1.insert(END, sid1[0])
+            ee2.delete(0, END)
+            ee2.insert(END, sid1[1])
+            ee3.delete(0, END)
+            ee3.insert(END, sid1[2])    
+
         def addPublisher():
-            #print("siddharth")
-            #print(name.get(),number.get(),address.get())
             backend.insertPublisherData(name.get(),number.get(),address.get())
-            list1.delete(0,END)
-            list1.insert(END,(name.get(),number.get(),address.get()))
+            pList.delete(0,END)
+            pList.insert(END,(name.get(),number.get(),address.get()))
 
         def viewPublisher():
-            list1.delete(0,END)
+            pList.delete(0,END)
             for row in backend.viewPublisherData():
-                list1.insert(END,row) 
-        #def deletePublisher():
+                pList.insert(END,row) 
+        
+        def deletePublisher():
+            print(sid1[0])
+            backend.deletePublisherData(sid1[0])
+            viewPublisher()
         
         pubwindow = Toplevel(window)
 
@@ -109,22 +173,28 @@ def guiPy():
         l1 = Label(pubwindow, text="Name").grid(row=1,column=5)
         l2 = Label(pubwindow, text="Number").grid(row=2,column=5)
         l3 = Label(pubwindow, text="Address").grid(row=3,column=5)
+        
         name = StringVar()
-        e1 = Entry(pubwindow,textvariable=name).grid(row=1,column=6)
+        ee1 = Entry(pubwindow,textvariable=name)
+        ee1.grid(row=1,column=6)
         number = StringVar()
-        e2 = Entry(pubwindow,textvariable=number).grid(row=2,column=6)
+        ee2 = Entry(pubwindow,textvariable=number)
+        ee2.grid(row=2,column=6)
         address = StringVar()
-        e3 = Entry(pubwindow,textvariable=address).grid(row=3,column=6)
+        ee3 = Entry(pubwindow,textvariable=address)
+        ee3.grid(row=3,column=6)
     
-        list1 = Listbox(pubwindow, height=10, width=45)
-        list1.grid(row=1, column=2, rowspan=6, columnspan=2)
+        pList = Listbox(pubwindow, height=10, width=45)
+        pList.grid(row=1, column=2, rowspan=6, columnspan=2)
+
+        pList.bind('<<ListboxSelect>>', selectRow1)
 
         b1 = ttk.Button(pubwindow, text="View All Publisher",
                         width=17,command=viewPublisher)
         b1.grid(row=1, column=0)
         b2 = ttk.Button(pubwindow, text="Add Publisher", width=17,command=addPublisher)
         b2.grid(row=2, column=0)
-        b3 = ttk.Button(pubwindow, text="Delete Publisher", width=15)
+        b3 = ttk.Button(pubwindow, text="Delete Publisher", width=17,command=deletePublisher)
         b3.grid(row=3, column=0)
         b4 = ttk.Button(pubwindow, text="Done", width=17, command=pubwindow.destroy)
         b4.grid(row=4, column=0)
@@ -136,7 +206,7 @@ def guiPy():
     "////////////////////////////////////////////////////////////////////////////////////"
      
     window = Tk()
-
+    #window.geometry('700x400')
     # create a toplevel menu  
     menubar = Menu(window) 
     filemenu = Menu(menubar, tearoff=0)  
@@ -149,63 +219,66 @@ def guiPy():
     # display the menu  
     window.config(menu=menubar)  
 
+    l0 = Label(window,text="Branch_id")
+    l0.grid(row=0,column=9)
     l1 = Label(window, text="bookId")
-    l1.grid(row=0, column=0)
+    l1.grid(row=1, column=9)
     l2 = Label(window, text="Title")
-    l2.grid(row=0, column=2)
+    l2.grid(row=2, column=9)
     l3 = Label(window, text="Author")
-    l3.grid(row=0, column=4)
-    l4 = Label(window, text="Year")
-    l4.grid(row=1, column=0)
-    l5 = Label(window, text="Publisher")
-    l5.grid(row=1, column=2)
+    l3.grid(row=3, column=9)
+    l4 = Label(window, text="Publisher")
+    l4.grid(row=4, column=9)
+    l5 = Label(window, text="Year")
+    l5.grid(row=5, column=9)
     l6 = Label(window, text="Quantity")
-    l6.grid(row=1, column=4)
+    l6.grid(row=6, column=9)
 
+    branchId_txt = StringVar()
+    e0 = Entry(window, textvariable = branchId_txt, fg='red')
+    e0.grid(row=0,column=10)
     bookId_txt = StringVar()
     e1 = Entry(window, textvariable=bookId_txt, fg='blue')
-    e1.grid(row=0, column=1)
+    e1.grid(row=1, column=10) 
     title_txt = StringVar()
     e2 = Entry(window, textvariable=title_txt, fg='blue')
-    e2.grid(row=0, column=3)
+    e2.grid(row=2, column=10)
     author_txt = StringVar()
     e3 = Entry(window, textvariable=author_txt, fg='blue')
-    e3.grid(row=0, column=5)
-    year_txt = StringVar()
-    e4 = Entry(window, textvariable=year_txt, fg='blue')
-    e4.grid(row=1, column=1)
+    e3.grid(row=3, column=10)
     publisher_txt = StringVar()
-    e5 = Entry(window, textvariable=publisher_txt, fg='blue')
-    e5.grid(row=1, column=3)
+    e4 = Entry(window, textvariable=publisher_txt, fg='blue')
+    e4.grid(row=4, column=10)
+    year_txt = StringVar()
+    e5 = Entry(window, textvariable=year_txt, fg='blue')
+    e5.grid(row=5, column=10)
     quantity_txt = StringVar()
     e6 = Entry(window, textvariable=quantity_txt, fg='blue')
-    e6.grid(row=1, column=5)
+    e6.grid(row=6, column=10)
 
     list1 = Listbox(window, height=10, width=45)
-    list1.grid(row=5, column=0, rowspan=6, columnspan=2)
+    list1.grid(row=1, column=3, rowspan=6, columnspan=6)
 
     list1.bind('<<ListboxSelect>>', selectRow)
 
     b1 = ttk.Button(window, text="View All Books",
                     width=15, command=viewBook)
-    b1.grid(row=3, column=0)
+    b1.grid(row=1, column=0)
     b2 = ttk.Button(window, text="Search Entry", width=15, command=searchBook)
-    b2.grid(row=3, column=1)
+    b2.grid(row=2, column=0)
     b3 = ttk.Button(window, text="Add Entry", width=15, command=addBook)
-    b3.grid(row=3, column=2)
-    
-
+    b3.grid(row=3, column=0)
     b4 = ttk.Button(window, text="Update Selected",
                     width=15, command=updateBook)
-    b4.grid(row=3, column=3)
+    b4.grid(row=4, column=0)
     b5 = ttk.Button(window, text="Delete Selected",
                     width=15, command=deleteBook)
-    b5.grid(row=3, column=4)
+    b5.grid(row=5, column=0)
     b6 = ttk.Button(window, text="Close", width=15, command=window.destroy)
-    b6.grid(row=3, column=5)
-
+    b6.grid(row=6, column=0)
+    window.mainloop()
     "---------------------------------BOOK issue----------------------------------"
-
+'''
     def selectRow1(Event):
         global sidd
         index1 = list2.curselection()
@@ -260,11 +333,12 @@ def guiPy():
     b8.grid(row=8, column=4)
     b9 = ttk.Button(window, text="Return Book", width=15, command=returnBook)
     b9.grid(row=8, column=5)
+'''
+    #window.mainloop()
 
-    window.mainloop()
 
-
-'''    "---------------------------------Login id block----------------------------------"
+   #"---------------------------------Login id block----------------------------------"
+'''
 def validateLogin():
     if(username.get() == "siddharth" and password.get() == "misraa123"):
         tkWindow.destroy()
@@ -291,6 +365,5 @@ loginButton = ttk.Button(tkWindow, text="Login",
                          command=validateLogin).grid(row=2, column=0)
 
 tkWindow.mainloop()
-
 '''
 guiPy()
