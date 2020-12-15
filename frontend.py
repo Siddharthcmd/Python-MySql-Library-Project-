@@ -4,6 +4,8 @@ from tkinter import ttk
 from tkinter import Toplevel, Button, Tk, Menu  
 from tkinter import *
 from tkinter import messagebox 
+import datetime
+from datetime import timedelta, date
 
 
 def guiPy():
@@ -16,6 +18,8 @@ def guiPy():
         global sid
         index = list1.curselection()
         sid = list1.get(index)
+        e0.delete(0, END)
+        e0.insert(END, sid[6])
         e1.delete(0, END)
         e1.insert(END, sid[0])
         e2.delete(0, END)
@@ -26,14 +30,21 @@ def guiPy():
         e4.insert(END, sid[3])
         e5.delete(0, END)
         e5.insert(END, sid[4])
-        #e6.delete(0, END)
-        #e6.insert(END, sid[5])
+        e6.delete(0, END)
+        e6.insert(END, sid[5])
     
 
     def viewBook():
-        list1.delete(0, END)
-        for row in backend.view():
-            list1.insert(END, row)
+        if (len(branchId_txt.get()) == 0 ):
+            root = Tk()
+            root.withdraw()
+            messagebox.showerror("Branch ID","BRANCH ID MISSING")
+            root.destroy()
+            root.mainloop()
+        else:
+            list1.delete(0, END)
+            for row in backend.view(branchId_txt.get()):
+                list1.insert(END, row)
 
     def searchBook():
         list1.delete(0, END)
@@ -254,7 +265,7 @@ def guiPy():
     e5.grid(row=5, column=10)
     quantity_txt = StringVar()
     e6 = Entry(window, textvariable=quantity_txt, fg='blue')
-    e6.grid(row=6, column=10)
+    e6.grid(row=6, column=10) 
 
     list1 = Listbox(window, height=10, width=45)
     list1.grid(row=1, column=3, rowspan=6, columnspan=6)
@@ -275,31 +286,40 @@ def guiPy():
                     width=15, command=deleteBook)
     b5.grid(row=5, column=0)
     b6 = ttk.Button(window, text="Close", width=15, command=window.destroy)
-    b6.grid(row=6, column=0)
-    window.mainloop()
+    b6.grid(row=6, column=0)                
     "---------------------------------BOOK issue----------------------------------"
-'''
+
     def selectRow1(Event):
         global sidd
         index1 = list2.curselection()
         sidd = list2.get(index1)
         e7.delete(0, END)
-        e7.insert(END, sidd[0])
+        e7.insert(END, sidd[4])
         e8.delete(0, END)
-        e8.insert(END, sidd[1])
-
+        e8.insert(END, sidd[0])
+        e9.delete(0, END)
+        e9.insert(END, sidd[1])
     def viewData():
         list2.delete(0, END)
         for row in backend.viewData():
             list2.insert(END, row)
 
     def issueBook():
-        backend.insertIssue(card_number.get(),
-                            borrower_name.get(), bookId_txt.get())
-        list2.delete(0, END)
-        list2.insert(
-            END, (card_number.get(), borrower_name.get(), bookId_txt.get()))
-        updateIsBook()
+
+        if (len(branchId_txt.get()) == 0 ):
+            root = Tk()
+            root.withdraw()
+            messagebox.showerror("Branch ID","BRANCH ID MISSING")
+            root.destroy()
+            root.mainloop()
+        else:
+            backend.insertIssue(date.today(), date.today()+timedelta(days=10),
+                bookId_txt.get(),branchId_txt.get(),card_number.get())
+            list2.delete(0, END)
+            list2.insert(
+                END, (date.today(), date.today()+timedelta(days=10),
+                bookId_txt.get(),branchId_txt.get(),card_number.get()))
+            updateIsBook()
 
     def returnBook():
         backend.deleteIssueBook(sidd[0], sidd[2])
@@ -307,34 +327,53 @@ def guiPy():
         viewBook()
 
     def updateIsBook():
-        backend.updateIssueBook(bookId_txt.get(), quantity_txt.get())
+        backend.updateIssueBook(bookId_txt.get(),branchId_txt.get(),quantity_txt.get())
         viewBook()
 
     l7 = Label(window, text="Card Number")
-    l7.grid(row=6, column=3)
-    l8 = Label(window, text="Borrower Name")
-    l8.grid(row=7, column=3)
+    l7.grid(row=9, column=8)
+    l8 = Label(window, text="Date Out")
+    l8.grid(row=10, column=8)
+    l9 = Label(window, text="Due Date")
+    l9.grid(row=11, column=8)
+    l10 = Label(window, text="Date In")
+    l10.grid(row=12, column=8)
+    l11 = Label(window, text="Fine")
+    l11.grid(row=13, column=8)
+
 
     card_number = StringVar()
     e7 = Entry(window, textvariable=card_number, fg='blue')
-    e7.grid(row=6, column=4)
-    borrower_name = StringVar()
-    e8 = Entry(window, textvariable=borrower_name, fg='blue')
-    e8.grid(row=7, column=4)
-
-    list2 = Listbox(window, height=10, width=55)
+    e7.grid(row=9, column=9)
+    dateOut = StringVar()
+    e8 = Entry(window, textvariable=dateOut, fg='blue')
+    e8.grid(row=10, column=9)
+    dueDate = StringVar()
+    e9 = Entry(window, textvariable=dueDate, fg='blue')
+    e9.grid(row=11, column=9)
+    dateIn = StringVar()
+    e10 = Entry(window, textvariable=dateIn, fg='blue')
+    e10.grid(row=12, column=9)
+    fine = StringVar()
+    e11 = Entry(window, textvariable=fine, fg='blue')
+    e11.grid(row=13, column=9)
+    e8.delete(0, END)
+    e8.insert(END, date.today())
+    e9.delete(0, END)
+    e9.insert(END,date.today()+timedelta(days=10))
+    list2 = Listbox(window,height=10, width=30)
     list2.grid(row=9, column=3, rowspan=6, columnspan=2)
 
     list2.bind('<<ListboxSelect>>', selectRow1)
 
     b7 = ttk.Button(window, text="View Data", width=15, command=viewData)
-    b7.grid(row=8, column=3)
+    b7.grid(row=10, column=0)
     b8 = ttk.Button(window, text="Issue Book", width=15, command=issueBook)
-    b8.grid(row=8, column=4)
+    b8.grid(row=11, column=0)
     b9 = ttk.Button(window, text="Return Book", width=15, command=returnBook)
-    b9.grid(row=8, column=5)
-'''
-    #window.mainloop()
+    b9.grid(row=12, column=0)
+
+    window.mainloop()
 
 
    #"---------------------------------Login id block----------------------------------"

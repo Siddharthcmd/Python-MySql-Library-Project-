@@ -4,7 +4,7 @@ from tkinter import ttk
 from tkinter import messagebox 
 #--------------------------------------Book copies--------------------------------------
 
-def LiBBranch():
+def LiBBranch():    
 
 
     def addDetail():
@@ -184,12 +184,16 @@ def insert(Branch_id,id, title, author, year, publisher,quantity):
     mydb.close()
 
 
-def view():
+def view(bID):
     mydb = pymysql.connect(host="localhost",
                            user="root", password="misraa123", database="MainLibraryDatabase")
     cur = mydb.cursor()
-    cur.execute("select * from Book")
-    rows = cur.fetchall()
+    if bID == "all":
+        cur.execute("select Book.*,NoOfCopies,branchID from BOOK,BOOK_COPIES where Book.book_id=BOOK_COPIES.bookId")
+        rows = cur.fetchall()
+    else:
+        cur.execute("select Book.*,NoOfCopies from BOOK,BOOK_COPIES where branchID ='" +str(bID)+"'  and Book.book_id=BOOK_COPIES.bookId")
+        rows = cur.fetchall()
     mydb.close()
     return rows
 
@@ -236,19 +240,19 @@ def viewData():
     mydb = pymysql.connect(host="localhost",
                            user="root", password="misraa123", database="MainLibraryDatabase")
     cur = mydb.cursor()
-    cur.execute("select * from issueBooks")
+    cur.execute("select * from BOOK_LENDING")
     rows = cur.fetchall()
     mydb.close()
     return rows
 
 
-def insertIssue(cardNumber, borrowerName, id):
+def insertIssue(dateo,ddate,bookId,branchId,cardNumber):
 
     mydb = pymysql.connect(host="localhost",
                            user="root", password="misraa123", database="MainLibraryDatabase")
     cur = mydb.cursor()
-    insertdata = "insert into issueBooks values('" + \
-        cardNumber + "','"+borrowerName+"','"+id+"')"
+    insertdata = "insert into BOOK_LENDING values('" + \
+        str(dateo) + "','"+str(ddate)+"','"+str(bookId)+"','"+str(branchId)+"','"+str(cardNumber)+"')"
     cur.execute(insertdata)
     mydb.commit()
     mydb.close()
