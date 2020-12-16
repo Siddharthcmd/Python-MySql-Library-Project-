@@ -87,7 +87,7 @@ def errorMessage(error):
         messagebox.showwarning("Unknow Publisher",
         """Publisher name not yet added in\nthe publisher data.
         Go to: View->Publisher->Add Publisher""")
-
+    root.quit()
     root.destroy()
     root.mainloop()
 
@@ -188,11 +188,14 @@ def view(bID):
     mydb = pymysql.connect(host="localhost",
                            user="root", password="misraa123", database="MainLibraryDatabase")
     cur = mydb.cursor()
-    if bID == "all":
+    if bID == "books":
+        cur.execute("select * from Book")
+        rows=cur.fetchall()
+    elif bID == "all":
         cur.execute("select Book.*,NoOfCopies,branchID from BOOK,BOOK_COPIES where Book.book_id=BOOK_COPIES.bookId")
         rows = cur.fetchall()
     else:
-        cur.execute("select Book.*,NoOfCopies from BOOK,BOOK_COPIES where branchID ='" +str(bID)+"'  and Book.book_id=BOOK_COPIES.bookId")
+        cur.execute("select Book.*,branchId,NoOfCopies from BOOK,BOOK_COPIES where branchID ='" +str(bID)+"'  and Book.book_id=BOOK_COPIES.bookId")
         rows = cur.fetchall()
     mydb.close()
     return rows
@@ -245,6 +248,16 @@ def viewData():
     mydb.close()
     return rows
 
+def searchCards(cardNo):
+    mydb = pymysql.connect(host="localhost",
+                           user="root", password="misraa123", database="MainLibraryDatabase")
+    cur = mydb.cursor()
+    searchcard = ("select * from BOOK_LENDING where CARD_NO  = '"+cardNo+"'")
+    cur.execute(searchcard)
+    row = cur.fetchall()
+    mydb.close()
+    return row
+
 
 def insertIssue(dateo,ddate,bookId,branchId,cardNumber):
 
@@ -252,40 +265,43 @@ def insertIssue(dateo,ddate,bookId,branchId,cardNumber):
                            user="root", password="misraa123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     insertdata = "insert into BOOK_LENDING values('" + \
-        str(dateo) + "','"+str(ddate)+"','"+str(bookId)+"','"+str(branchId)+"','"+str(cardNumber)+"')"
+        str(dateo) + "','"+ddate+"','"+str(bookId)+"','"+str(branchId)+"','"+str(cardNumber)+"')"
     cur.execute(insertdata)
     mydb.commit()
     mydb.close()
 
 
-def updateIssueBook(id, quantity):
+def updateIssueBook(bId,braId, quantity):
     mydb = pymysql.connect(host="localhost",
                            user="root", password="misraa123", database="MainLibraryDatabase")
     cur = mydb.cursor()
-    updateBook = ("update books set quantity = '" +
-                  str(int(quantity)-1)+"' where id='"+str(id)+"'")
+    updateBook = ("update BOOK_COPIES set NoOfCopies = '" +
+                  str(int(quantity)-1)+"' where bookId='"+str(bId)+"' and branchID='"+str(braId)+"'")
     cur.execute(updateBook)
     mydb.commit()
     mydb.close()
 
 
-def deleteIssueBook(cardNumber, id):
+def deleteIssueBook(BId,BraId,cardNumber):
     mydb = pymysql.connect(host="localhost",
                            user="root", password="misraa123", database="MainLibraryDatabase")
     cur = mydb.cursor()
 
     # to obtain book quantity from books table
-    showData1 = ("select quantity from books where id = '" +
-                 str(id)+"'")
+    showData1 = ("select NoOfCopies from BOOK_COPIES where bookId = '" +
+                 str(BId)+"' and branchId = '" +
+                 str(BraId)+"'")
     cur.execute(showData1)          # ((2),)
     row1 = cur.fetchall()
     bookQuantity = (row1[0][0])
     bookQuantity += 1
 
-    deleteBook = ("delete from issuebooks where cardNumber = '" +
-                  str(cardNumber)+"'")
-    updateBook = ("update books set quantity = '" +
-                  str(bookQuantity) + "' where id='"+str(id)+"'")
+    deleteBook = ("delete from BOOK_LENDING where CARD_NO = '" +
+                  str(cardNumber)+"'and BOOK_ID = '" +
+                  str(BId)+"' and BRANCH_ID = '" +
+                  str(BraId)+"'")
+    updateBook = ("update BOOK_COPIES set NoOfCopies = '" +
+                  str(bookQuantity) + "' where bookId='"+str(BId)+"' and branchId='"+str(BraId)+"'")
     cur.execute(updateBook)
     cur.execute(deleteBook)
     mydb.commit()

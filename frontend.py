@@ -5,7 +5,7 @@ from tkinter import Toplevel, Button, Tk, Menu
 from tkinter import *
 from tkinter import messagebox 
 import datetime
-from datetime import timedelta, date
+from datetime import timedelta, date,datetime
 
 
 def guiPy():
@@ -18,8 +18,6 @@ def guiPy():
         global sid
         index = list1.curselection()
         sid = list1.get(index)
-        e0.delete(0, END)
-        e0.insert(END, sid[6])
         e1.delete(0, END)
         e1.insert(END, sid[0])
         e2.delete(0, END)
@@ -31,14 +29,18 @@ def guiPy():
         e5.delete(0, END)
         e5.insert(END, sid[4])
         e6.delete(0, END)
-        e6.insert(END, sid[5])
-    
+        e6.insert(END, sid[6])
+        e0.delete(0, END)        
+        e0.insert(END, sid[5])
 
     def viewBook():
         if (len(branchId_txt.get()) == 0 ):
             root = Tk()
             root.withdraw()
             messagebox.showerror("Branch ID","BRANCH ID MISSING")
+            messagebox.showinfo('Return',"""1:Type branch id for view books in that branch\n
+            2:Type "all" to view all the books in all the branches
+            3:Type "books" to view all the books""")
             root.destroy()
             root.mainloop()
         else:
@@ -299,6 +301,8 @@ def guiPy():
         e8.insert(END, sidd[0])
         e9.delete(0, END)
         e9.insert(END, sidd[1])
+        e0.delete(0, END)
+        e0.insert(END, sidd[3])
     def viewData():
         list2.delete(0, END)
         for row in backend.viewData():
@@ -313,23 +317,40 @@ def guiPy():
             root.destroy()
             root.mainloop()
         else:
-            backend.insertIssue(date.today(), date.today()+timedelta(days=10),
+            backend.insertIssue(dateOut.get(), dueDate.get(),
                 bookId_txt.get(),branchId_txt.get(),card_number.get())
             list2.delete(0, END)
             list2.insert(
-                END, (date.today(), date.today()+timedelta(days=10),
+                END, (dateOut.get(), dueDate.get(),
                 bookId_txt.get(),branchId_txt.get(),card_number.get()))
             updateIsBook()
-
+            
     def returnBook():
-        backend.deleteIssueBook(sidd[0], sidd[2])
+        backend.deleteIssueBook(sidd[2], sidd[3],sidd[4])
         viewData()
         viewBook()
 
     def updateIsBook():
         backend.updateIssueBook(bookId_txt.get(),branchId_txt.get(),quantity_txt.get())
         viewBook()
+    
+    def searchCard():
+        list2.delete(0,END)
+        for rows in backend.searchCards(card_number.get()):
+            list2.insert(END,rows)
 
+    def checkFine():
+        print(dueDate.get(),dateIn.get())
+        date1 = datetime.strptime(dueDate.get(), "%Y-%m-%d").date()
+        date2 = datetime.strptime(dateIn.get(), "%Y-%m-%d").date()
+        diff=date2-date1
+        if(diff.days<=0):
+            e11.delete(0,END)
+            e11.insert(END,"no fine")
+        else:
+            e11.delete(0,END)
+            e11.insert(END,diff.days * 5)        
+    
     l7 = Label(window, text="Card Number")
     l7.grid(row=9, column=8)
     l8 = Label(window, text="Date Out")
@@ -340,6 +361,7 @@ def guiPy():
     l10.grid(row=12, column=8)
     l11 = Label(window, text="Fine")
     l11.grid(row=13, column=8)
+
 
 
     card_number = StringVar()
@@ -360,7 +382,9 @@ def guiPy():
     e8.delete(0, END)
     e8.insert(END, date.today())
     e9.delete(0, END)
-    e9.insert(END,date.today()+timedelta(days=10))
+    e9.insert(END,date.today()+timedelta(days=15))
+    e10.delete(0, END)
+    e10.insert(END, date.today())
     list2 = Listbox(window,height=10, width=30)
     list2.grid(row=9, column=3, rowspan=6, columnspan=2)
 
@@ -372,12 +396,14 @@ def guiPy():
     b8.grid(row=11, column=0)
     b9 = ttk.Button(window, text="Return Book", width=15, command=returnBook)
     b9.grid(row=12, column=0)
-
+    b9 = ttk.Button(window, text="Search", width=15, command=searchCard)
+    b9.grid(row=13, column=0)
+    b9 = ttk.Button(window, text="Check", width=8, command=checkFine)
+    b9.grid(row=13, column=10)
     window.mainloop()
 
 
-   #"---------------------------------Login id block----------------------------------"
-'''
+# "---------------------------------Login id block----------------------------------"
 def validateLogin():
     if(username.get() == "siddharth" and password.get() == "misraa123"):
         tkWindow.destroy()
@@ -404,5 +430,3 @@ loginButton = ttk.Button(tkWindow, text="Login",
                          command=validateLogin).grid(row=2, column=0)
 
 tkWindow.mainloop()
-'''
-guiPy()
