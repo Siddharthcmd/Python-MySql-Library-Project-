@@ -72,6 +72,7 @@ def errorMessage(error):
   
     root = Tk() 
     root.withdraw()
+
     if(error==1):
         messagebox.showerror("Depulicate entry",
         "this book is already been added")
@@ -192,7 +193,7 @@ def view(bID):
         cur.execute("select * from Book")
         rows=cur.fetchall()
     elif bID == "all":
-        cur.execute("select Book.*,NoOfCopies,branchID from BOOK,BOOK_COPIES where Book.book_id=BOOK_COPIES.bookId")
+        cur.execute("select Book.*,branchID,NoOfCopies from BOOK,BOOK_COPIES where Book.book_id=BOOK_COPIES.bookId")
         rows = cur.fetchall()
     else:
         cur.execute("select Book.*,branchId,NoOfCopies from BOOK,BOOK_COPIES where branchID ='" +str(bID)+"'  and Book.book_id=BOOK_COPIES.bookId")

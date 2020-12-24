@@ -219,7 +219,7 @@ def guiPy():
     "////////////////////////////////////////////////////////////////////////////////////"
      
     window = Tk()
-    #window.geometry('700x400')
+    #window.geometry("500x100+300+300")
     # create a toplevel menu  
     menubar = Menu(window) 
     filemenu = Menu(menubar, tearoff=0)  
@@ -403,7 +403,7 @@ def guiPy():
     window.mainloop()
 
 
-# "---------------------------------Login id block----------------------------------"
+#---------------------------------Login id block----------------------------------
 def validateLogin():
     if(username.get() == "siddharth" and password.get() == "misraa123"):
         tkWindow.destroy()
