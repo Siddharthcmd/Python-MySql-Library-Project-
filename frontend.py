@@ -38,8 +38,9 @@ def guiPy():
             root = Tk()
             root.withdraw()
             messagebox.showerror("Branch ID","BRANCH ID MISSING")
-            messagebox.showinfo('Return',"""1:Type branch id for view books in that branch\n
-            2:Type "all" to view all the books in all the branches
+            messagebox.showinfo('Return',"""
+            1:Type branch id to view books in that branch\n
+            2:Type "all" to view all the books in all the branches\n 
             3:Type "books" to view all the books""")
             root.destroy()
             root.mainloop()

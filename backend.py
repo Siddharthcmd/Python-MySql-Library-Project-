@@ -2,6 +2,11 @@ import pymysql
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox 
+def connect():
+    mydb = pymysql.connect(host="localhost",
+                           user="root", password="test123", database="MainLibraryDatabase")
+    mydb.close()
+
 #--------------------------------------Book copies--------------------------------------
 
 def LiBBranch():    
@@ -10,7 +15,7 @@ def LiBBranch():
     def addDetail():
         
         mydb = pymysql.connect(host="localhost",
-                        user="root", password="misraa123", database="MainLibraryDatabase")
+                        user="root", password="test123", database="MainLibraryDatabase")
         cur = mydb.cursor()
         add = "insert into BOOK_COPIES values('"+e1.get()+"','"+e2.get()+"','"+e3.get()+"')"
         cur.execute(add)
@@ -21,7 +26,7 @@ def LiBBranch():
         
     def viewBook():
         mydb = pymysql.connect(host="localhost",
-                        user="root", password="misraa123", database="MainLibraryDatabase")
+                        user="root", password="test123", database="MainLibraryDatabase")
         cur = mydb.cursor()
         view = "select * from BOOK_COPIES"
         cur.execute(view)
@@ -88,21 +93,19 @@ def errorMessage(error):
         messagebox.showwarning("Unknow Publisher",
         """Publisher name not yet added in\nthe publisher data.
         Go to: View->Publisher->Add Publisher""")
+    elif(error==3):
+        messagebox.showerror("Book not available","This book is not available")
+    elif(error==4):
+        messagebox.showerror("Already issued","This book from your branch id is already been issued to this card holder")
     root.quit()
     root.destroy()
     root.mainloop()
-
-def connect():
-    mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
-    mydb.close()
-
 
 #--------------------------------------Publilsher Details--------------------------------------
 
 def insertPublisherData(name,number,address):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     insertPublisher = "insert into PUBLISHER values('"+name+"','"+number+"','" +address+"')"
     cur.execute(insertPublisher)
@@ -112,7 +115,7 @@ def insertPublisherData(name,number,address):
 
 def viewPublisherData():
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     viewPublisher = "select * from PUBLISHER"
     cur.execute(viewPublisher)
@@ -122,7 +125,7 @@ def viewPublisherData():
 
 def deletePublisherData(name):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()    
     deletePublisher="delete from PUBLISHER where NAME ='"+name+"'"
     cur.execute(deletePublisher)
@@ -133,7 +136,7 @@ def deletePublisherData(name):
 
 def insertBranchData(id,name,address):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     insertBranch = "insert into LibraryBranch values('"+id+"','"+name+"','" +address+"')"
     cur.execute(insertBranch)
@@ -143,7 +146,7 @@ def insertBranchData(id,name,address):
 
 def viewBranchData():
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     viewBranch = "select * from LibraryBranch"
     cur.execute(viewBranch)
@@ -153,7 +156,7 @@ def viewBranchData():
 
 def deleteBranchData(id):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()    
     deletePublisher="delete from LibraryBranch where branchId ='"+str(id)+"'"
     cur.execute(deletePublisher)
@@ -166,7 +169,7 @@ def deleteBranchData(id):
 def insert(Branch_id,id, title, author, year, publisher,quantity):
 
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     insertBooks = "insert into Book values('"+id+"','"+title+"','" + \
         author+"','" + publisher+"','"+year+"')"
@@ -187,7 +190,7 @@ def insert(Branch_id,id, title, author, year, publisher,quantity):
 
 def view(bID):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     if bID == "books":
         cur.execute("select * from Book")
@@ -204,7 +207,7 @@ def view(bID):
 
 def search(id="", title="", author="", year="", publisher=""):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     searchBook = ("select * from Book where book_id = '"+id+"' or title = '"+title +
                   "' or author = '"+author+"' or publisher = '"+publisher+
@@ -217,7 +220,7 @@ def search(id="", title="", author="", year="", publisher=""):
 
 def delete(id):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     deleteBook = ("delete from Book where book_id = '"+str(id)+"'")
     cur.execute(deleteBook)
@@ -227,7 +230,7 @@ def delete(id):
 
 def update(branhid, id, title, author, year, publisher, quantity):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     updateBook = ("update Book set TITLE = '"+title+"', AUTHOR = '" +
                   author+"' , PUBLISHER = '"+publisher+"' , year_of_publish = '"+
@@ -242,7 +245,7 @@ def update(branhid, id, title, author, year, publisher, quantity):
 
 def viewData():
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     cur.execute("select * from BOOK_LENDING")
     rows = cur.fetchall()
@@ -251,7 +254,7 @@ def viewData():
 
 def searchCards(cardNo):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
     searchcard = ("select * from BOOK_LENDING where CARD_NO  = '"+cardNo+"'")
     cur.execute(searchcard)
@@ -263,29 +266,36 @@ def searchCards(cardNo):
 def insertIssue(dateo,ddate,bookId,branchId,cardNumber):
 
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
-    insertdata = "insert into BOOK_LENDING values('" + \
-        str(dateo) + "','"+ddate+"','"+str(bookId)+"','"+str(branchId)+"','"+str(cardNumber)+"')"
-    cur.execute(insertdata)
+    try:
+        insertdata = "insert into BOOK_LENDING values('" + \
+            str(dateo) + "','"+ddate+"','"+str(bookId)+"','"+str(branchId)+"','"+str(cardNumber)+"')"
+        cur.execute(insertdata)
+    except pymysql.err.IntegrityError as e:
+        if(e.args[0]==1062):
+            errorMessage(4)
     mydb.commit()
     mydb.close()
 
 
 def updateIssueBook(bId,braId, quantity):
-    mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
-    cur = mydb.cursor()
-    updateBook = ("update BOOK_COPIES set NoOfCopies = '" +
-                  str(int(quantity)-1)+"' where bookId='"+str(bId)+"' and branchID='"+str(braId)+"'")
-    cur.execute(updateBook)
-    mydb.commit()
-    mydb.close()
+        mydb = pymysql.connect(host="localhost",
+                            user="root", password="test123", database="MainLibraryDatabase")
+        cur = mydb.cursor()
+        if int(quantity) > 0:
+            updateBook = ("update BOOK_COPIES set NoOfCopies = '" +
+                        str(int(quantity)-1)+"' where bookId='"+str(bId)+"' and branchID='"+str(braId)+"'")
+            cur.execute(updateBook)
+        else:
+            errorMessage(3)
+        mydb.commit()
+        mydb.close()
 
 
 def deleteIssueBook(BId,BraId,cardNumber):
     mydb = pymysql.connect(host="localhost",
-                           user="root", password="misraa123", database="MainLibraryDatabase")
+                           user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
 
     # to obtain book quantity from books table
