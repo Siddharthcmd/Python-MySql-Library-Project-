@@ -16,8 +16,8 @@ def guiPy():
 
     def selectRow(Event):
         global sid
-        index = list1.curselection()
-        sid = list1.get(index)
+        #index = book_tree.focus()
+        sid=issue_book_tree.item(issue_book_tree.focus(),'values')
         e1.delete(0, END)
         e1.insert(END, sid[0])
         e2.delete(0, END)
@@ -45,10 +45,18 @@ def guiPy():
             root.destroy()
             root.mainloop()
         else:
+            for record in book_tree.get_children():
+                book_tree.delete(record)
+            global count
+            count=0
+            for row in backend.view(branchId_txt.get()):
+                book_tree.insert(parent='',index='end',iid=count,text="",values=(row))
+                count+=1
+            '''    
             list1.delete(0, END)
             for row in backend.view(branchId_txt.get()):
                 list1.insert(END, row)
-
+            '''
     def searchBook():
         list1.delete(0, END)
         for row in backend.search(bookId_txt.get(),
@@ -58,9 +66,13 @@ def guiPy():
     def addBook():
         backend.insert(branchId_txt.get(),bookId_txt.get(), title_txt.get(),
         author_txt.get(),year_txt.get(), publisher_txt.get(),quantity_txt.get())
-        list1.delete(0, END)
-        list1.insert(END, (bookId_txt.get(), title_txt.get(), 
+        for record in book_tree.get_children():
+            book_tree.delete(record)
+        book_tree.insert(parent='',index='end',iid=count,text="",values=(branchId_txt.get(),bookId_txt.get(), title_txt.get(),
         author_txt.get(),year_txt.get(), publisher_txt.get(),quantity_txt.get()))
+        #list1.delete(0, END)
+        #list1.insert(END, (bookId_txt.get(), title_txt.get(), 
+        #author_txt.get(),year_txt.get(), publisher_txt.get(),quantity_txt.get()))
         e1.delete(0, END)
         e2.delete(0, END)
         e3.delete(0, END)
@@ -269,11 +281,40 @@ def guiPy():
     quantity_txt = StringVar()
     e6 = Entry(window, textvariable=quantity_txt, fg='blue')
     e6.grid(row=6, column=10) 
+    
+    #define our tree
+    book_tree =ttk.Treeview(window)
+   
+    #define our colum
+    book_tree['columns']=("id","book","author","publisher","year","branchId","quantity")
 
-    list1 = Listbox(window, height=10, width=45)
-    list1.grid(row=1, column=3, rowspan=6, columnspan=6)
+    #formate our colums
 
-    list1.bind('<<ListboxSelect>>', selectRow)
+    book_tree.column("#0",width=0,stretch=NO)
+    book_tree.column("id",width=25)
+    book_tree.column("book",width=130)
+    book_tree.column("author",width=125)
+    book_tree.column("publisher",width=125)
+    book_tree.column("year",width=125)
+    book_tree.column("branchId",width=125)
+    book_tree.column("quantity",width=85)
+
+    #create  headings
+
+    book_tree.heading("#0",text="",anchor="e")
+    book_tree.heading("id",text="ID",anchor="w")
+    book_tree.heading("book",text="BOOK",anchor=CENTER)
+    book_tree.heading("author",text="AUTHOR",anchor=CENTER)
+    book_tree.heading("publisher",text="PUBLISHER",anchor=CENTER)
+    book_tree.heading("year",text="YEAR",anchor=CENTER)
+    book_tree.heading("branchId",text="BRANCH ID",anchor=CENTER)
+    book_tree.heading("quantity",text="QUANTITY",anchor=CENTER)
+    book_tree.grid(row=1, column=3,rowspan=6, columnspan=6)
+    book_tree.bind("<ButtonRelease-1>",selectRow)
+    #list1 = Listbox(window, height=10, width=45)
+    #list1.grid(row=1, column=3, rowspan=6, columnspan=6)
+
+    #list1.bind('<<ListboxSelect>>', selectRow)
 
     b1 = ttk.Button(window, text="View All Books",
                     width=15, command=viewBook)
@@ -294,8 +335,7 @@ def guiPy():
 
     def selectRow1(Event):
         global sidd
-        index1 = list2.curselection()
-        sidd = list2.get(index1)
+        sidd=issue_book_tree.item(issue_book_tree.focus(),'values')
         e7.delete(0, END)
         e7.insert(END, sidd[4])
         e8.delete(0, END)
@@ -305,9 +345,13 @@ def guiPy():
         e0.delete(0, END)
         e0.insert(END, sidd[3])
     def viewData():
-        list2.delete(0, END)
+        for record in issue_book_tree.get_children():
+            issue_book_tree.delete(record)
+        global count1
+        count1=0
         for row in backend.viewData():
-            list2.insert(END, row)
+            issue_book_tree.insert(parent='',index='end',iid=count1,text="",values=(row))
+            count1+=1
 
     def issueBook():
 
@@ -386,10 +430,36 @@ def guiPy():
     e9.insert(END,date.today()+timedelta(days=15))
     e10.delete(0, END)
     e10.insert(END, date.today())
-    list2 = Listbox(window,height=10, width=30)
-    list2.grid(row=9, column=3, rowspan=6, columnspan=2)
 
-    list2.bind('<<ListboxSelect>>', selectRow1)
+    #define our tree
+    issue_book_tree =ttk.Treeview(window)
+   
+    #define our colum
+    issue_book_tree['columns']=("dateOut","dateIn","bookId","branchId","cardNum")
+
+    #formate our colums
+
+    issue_book_tree.column("#0",width=0,stretch=NO)
+    issue_book_tree.column("dateOut",width=120)
+    issue_book_tree.column("dateIn",width=130)
+    issue_book_tree.column("bookId",width=125)
+    issue_book_tree.column("branchId",width=125)
+    issue_book_tree.column("cardNum",width=125)
+
+    #create  headings
+
+    issue_book_tree.heading("#0",text="",anchor="e")
+    issue_book_tree.heading("dateOut",text="DATE OUT",anchor="w")
+    issue_book_tree.heading("dateIn",text="DATE IN",anchor=CENTER)
+    issue_book_tree.heading("bookId",text="BOOK ID",anchor=CENTER)
+    issue_book_tree.heading("branchId",text="BRANCH ID",anchor=CENTER)
+    issue_book_tree.heading("cardNum",text="CARD NUMBER",anchor=CENTER)
+    issue_book_tree.grid(row=9, column=3,rowspan=6, columnspan=2)
+    issue_book_tree.bind("<ButtonRelease-1>",selectRow1)
+    #list2 = Listbox(window,height=10, width=30)
+    #list2.grid(row=9, column=3, rowspan=6, columnspan=2)
+
+    #list2.bind('<<ListboxSelect>>', selectRow1)
 
     b7 = ttk.Button(window, text="View Data", width=15, command=viewData)
     b7.grid(row=10, column=0)
@@ -403,7 +473,7 @@ def guiPy():
     b9.grid(row=13, column=10)
     window.mainloop()
 
-
+'''
 #---------------------------------Login id block----------------------------------
 def validateLogin():
     if(username.get() == "siddharth" and password.get() == "misraa123"):
@@ -431,3 +501,5 @@ loginButton = ttk.Button(tkWindow, text="Login",
                          command=validateLogin).grid(row=2, column=0)
 
 tkWindow.mainloop()
+'''
+guiPy()
