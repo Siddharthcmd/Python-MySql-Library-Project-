@@ -74,10 +74,6 @@ def LiBBranch():
 #--------------------------------------error Block--------------------------------------
 
 def errorMessage(error):
-  
-    root = Tk() 
-    root.withdraw()
-
     if(error==1):
         messagebox.showerror("Depulicate entry",
         "this book is already been added")
@@ -86,7 +82,6 @@ def errorMessage(error):
         'Do you want to add book copies in another branch',icon = 'warning')
         if MsgBox == 'yes':
             LiBBranch()
-            root.destroy()
         else:
             messagebox.showinfo('Return','You will now return to the application screen')
     elif(error==2):    
@@ -97,9 +92,6 @@ def errorMessage(error):
         messagebox.showerror("Book not available","This book is not available")
     elif(error==4):
         messagebox.showerror("Already issued","This book from your branch id is already been issued to this card holder")
-    root.quit()
-    root.destroy()
-    root.mainloop()
 
 #--------------------------------------Publilsher Details--------------------------------------
 
@@ -178,14 +170,21 @@ def insert(Branch_id,id, title, author, year, publisher,quantity):
     try:
         cur.execute(insertBooks)
         cur.execute(insertBookCopies)
+        mydb.commit()
+        mydb.close()
+        return True
     except pymysql.err.IntegrityError as e:
         if(e.args[0]==1062):
+            mydb.commit()
+            mydb.close()        
             errorMessage(1)
+            return False
         elif(e.args[0]==1452):
+            mydb.commit()
+            mydb.close()  
             errorMessage(2)
+            return False
     
-    mydb.commit()
-    mydb.close()
 
 
 def view(bID):
@@ -270,7 +269,7 @@ def insertIssue(dateo,ddate,bookId,branchId,cardNumber):
     cur = mydb.cursor()
     try:
         insertdata = "insert into BOOK_LENDING values('" + \
-            str(dateo) + "','"+ddate+"','"+str(bookId)+"','"+str(branchId)+"','"+str(cardNumber)+"')"
+            str(dateo) + "','"+str(ddate)+"','"+str(bookId)+"','"+str(branchId)+"','"+str(cardNumber)+"')"
         cur.execute(insertdata)
     except pymysql.err.IntegrityError as e:
         if(e.args[0]==1062):
@@ -279,41 +278,14 @@ def insertIssue(dateo,ddate,bookId,branchId,cardNumber):
     mydb.close()
 
 
-def updateIssueBook(bId,braId, quantity):
-        mydb = pymysql.connect(host="localhost",
-                            user="root", password="test123", database="MainLibraryDatabase")
-        cur = mydb.cursor()
-        if int(quantity) > 0:
-            updateBook = ("update BOOK_COPIES set NoOfCopies = '" +
-                        str(int(quantity)-1)+"' where bookId='"+str(bId)+"' and branchID='"+str(braId)+"'")
-            cur.execute(updateBook)
-        else:
-            errorMessage(3)
-        mydb.commit()
-        mydb.close()
-
-
 def deleteIssueBook(BId,BraId,cardNumber):
     mydb = pymysql.connect(host="localhost",
                            user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
-
-    # to obtain book quantity from books table
-    showData1 = ("select NoOfCopies from BOOK_COPIES where bookId = '" +
-                 str(BId)+"' and branchId = '" +
-                 str(BraId)+"'")
-    cur.execute(showData1)          # ((2),)
-    row1 = cur.fetchall()
-    bookQuantity = (row1[0][0])
-    bookQuantity += 1
-
     deleteBook = ("delete from BOOK_LENDING where CARD_NO = '" +
                   str(cardNumber)+"'and BOOK_ID = '" +
                   str(BId)+"' and BRANCH_ID = '" +
                   str(BraId)+"'")
-    updateBook = ("update BOOK_COPIES set NoOfCopies = '" +
-                  str(bookQuantity) + "' where bookId='"+str(BId)+"' and branchId='"+str(BraId)+"'")
-    cur.execute(updateBook)
     cur.execute(deleteBook)
     mydb.commit()
     mydb.close()

@@ -38,3 +38,22 @@ CREATE TABLE BOOK_LENDING(
 	CARD_NO integer,
 	primary key(BOOK_ID,BRANCH_ID,CARD_NO)
 	);
+
+delimiter //
+create trigger decrement
+after insert on BOOK_LENDING
+FOR each row
+begin
+UPDATE BOOK_COPIES SET NoOfCopies=NoOfCopies-1 where bookId=new.BOOK_ID and branchId=new.BRANCH_ID;
+end;//
+delimiter ;
+
+
+delimiter //
+create trigger increment
+after delete on BOOK_LENDING
+FOR each row
+begin
+UPDATE BOOK_COPIES SET NoOfCopies=NoOfCopies+1 where bookId=old.BOOK_ID and branchId=old.BRANCH_ID;
+end;//
+delimiter ;

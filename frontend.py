@@ -17,7 +17,7 @@ def guiPy():
     def selectRow(Event):
         global sid
         #index = book_tree.focus()
-        sid=issue_book_tree.item(issue_book_tree.focus(),'values')
+        sid=book_tree.item(book_tree.focus(),'values')
         e1.delete(0, END)
         e1.insert(END, sid[0])
         e2.delete(0, END)
@@ -47,38 +47,39 @@ def guiPy():
         else:
             for record in book_tree.get_children():
                 book_tree.delete(record)
+            book_tree.tag_configure('oddrow',background="#ffffb3")
+            book_tree.tag_configure('evenrow',background="white")
             global count
             count=0
             for row in backend.view(branchId_txt.get()):
-                book_tree.insert(parent='',index='end',iid=count,text="",values=(row))
+                if count%2==0:
+                    book_tree.insert(parent='',index='end',iid=count,text="",values=(row),tags=('evenrow',))
+                else:
+                    book_tree.insert(parent='',index='end',iid=count,text="",values=(row),tags=('oddrow',))
                 count+=1
-            '''    
-            list1.delete(0, END)
-            for row in backend.view(branchId_txt.get()):
-                list1.insert(END, row)
-            '''
+    
     def searchBook():
-        list1.delete(0, END)
-        for row in backend.search(bookId_txt.get(),
-         title_txt.get(), author_txt.get(), year_txt.get(), publisher_txt.get()):
-            list1.insert(END, row)
-
-    def addBook():
-        backend.insert(branchId_txt.get(),bookId_txt.get(), title_txt.get(),
-        author_txt.get(),year_txt.get(), publisher_txt.get(),quantity_txt.get())
         for record in book_tree.get_children():
             book_tree.delete(record)
-        book_tree.insert(parent='',index='end',iid=count,text="",values=(branchId_txt.get(),bookId_txt.get(), title_txt.get(),
-        author_txt.get(),year_txt.get(), publisher_txt.get(),quantity_txt.get()))
-        #list1.delete(0, END)
-        #list1.insert(END, (bookId_txt.get(), title_txt.get(), 
-        #author_txt.get(),year_txt.get(), publisher_txt.get(),quantity_txt.get()))
-        e1.delete(0, END)
-        e2.delete(0, END)
-        e3.delete(0, END)
-        e4.delete(0, END)
-        e5.delete(0, END)
-        e6.delete(0, END)
+        for row in backend.search(bookId_txt.get(),
+         title_txt.get(), author_txt.get(), year_txt.get(), publisher_txt.get()):
+            book_tree.insert(parent='',index='end',text="",values=(row))
+
+    def addBook():
+        status=backend.insert(branchId_txt.get(),bookId_txt.get(), title_txt.get(),
+        author_txt.get(),year_txt.get(), publisher_txt.get(),quantity_txt.get())
+        if status==True:
+            for record in book_tree.get_children():
+                book_tree.delete(record)
+            book_tree.insert(parent='',index='end',iid=count,text="",values=(bookId_txt.get(), title_txt.get(),
+            author_txt.get(),year_txt.get(), publisher_txt.get(),branchId_txt.get(),quantity_txt.get()))
+            e1.delete(0, END)
+            e2.delete(0, END)
+            e3.delete(0, END)
+            e4.delete(0, END)
+            e5.delete(0, END)
+            e6.delete(0, END)
+    
     def deleteBook():
         backend.delete(sid[0])
         viewBook()
@@ -88,7 +89,6 @@ def guiPy():
         e4.delete(0, END)
         e5.delete(0, END)
         e6.delete(0, END)
-
 
     def updateBook():
         backend.update(branchId_txt.get(), bookId_txt.get(), title_txt.get(), author_txt.get(),
@@ -148,7 +148,7 @@ def guiPy():
 
         bList.bind('<<ListboxSelect>>', selectRow2)
 
-        b1 = ttk.Button(brawindow, text="View All Branches",
+        b1 = ttk.Button(brawindow, text="View All Branches 📄",
                         width=17,command=viewBranch)
         b1.grid(row=1, column=0)
         b2 = ttk.Button(brawindow, text="Add Branch", width=17,command=addBranch)
@@ -231,7 +231,23 @@ def guiPy():
     #----------------------------------MAIN WINDOW---------------------------------
     "////////////////////////////////////////////////////////////////////////////////////"
      
-    window = Tk()
+    window = Tk()  
+    style = ttk.Style()
+    style.theme_use("clam")
+    style = ttk.Style()
+
+    def fixed_map(option):
+        # Returns the style map for 'option' with any styles starting with
+        # ("!disabled", "!selected", ...) filtered out
+
+        # style.map() returns an empty list for missing options, so this should
+        # be future-safe
+        return [elm for elm in style.map("Treeview", query_opt=option)
+                if elm[:2] != ("!disabled", "!selected")]
+
+    style.map("Treeview",
+            foreground=fixed_map("foreground"),
+            background=fixed_map("background"))
     #window.geometry("500x100+300+300")
     # create a toplevel menu  
     menubar = Menu(window) 
@@ -284,25 +300,25 @@ def guiPy():
     
     #define our tree
     book_tree =ttk.Treeview(window)
-   
+    
     #define our colum
     book_tree['columns']=("id","book","author","publisher","year","branchId","quantity")
 
     #formate our colums
 
     book_tree.column("#0",width=0,stretch=NO)
-    book_tree.column("id",width=25)
+    book_tree.column("id",anchor=CENTER,width=25)
     book_tree.column("book",width=130)
     book_tree.column("author",width=125)
     book_tree.column("publisher",width=125)
-    book_tree.column("year",width=125)
-    book_tree.column("branchId",width=125)
-    book_tree.column("quantity",width=85)
+    book_tree.column("year",anchor=CENTER,width=125)
+    book_tree.column("branchId",anchor=CENTER,width=125)
+    book_tree.column("quantity",anchor=CENTER,width=85)
 
     #create  headings
 
     book_tree.heading("#0",text="",anchor="e")
-    book_tree.heading("id",text="ID",anchor="w")
+    book_tree.heading("id",text="ID",anchor=CENTER)
     book_tree.heading("book",text="BOOK",anchor=CENTER)
     book_tree.heading("author",text="AUTHOR",anchor=CENTER)
     book_tree.heading("publisher",text="PUBLISHER",anchor=CENTER)
@@ -311,25 +327,21 @@ def guiPy():
     book_tree.heading("quantity",text="QUANTITY",anchor=CENTER)
     book_tree.grid(row=1, column=3,rowspan=6, columnspan=6)
     book_tree.bind("<ButtonRelease-1>",selectRow)
-    #list1 = Listbox(window, height=10, width=45)
-    #list1.grid(row=1, column=3, rowspan=6, columnspan=6)
-
-    #list1.bind('<<ListboxSelect>>', selectRow)
-
-    b1 = ttk.Button(window, text="View All Books",
+    vsb = ttk.Scrollbar(window, orient="vertical", command=book_tree.yview)
+    b1 = Button(window, text="View All Books",
                     width=15, command=viewBook)
     b1.grid(row=1, column=0)
-    b2 = ttk.Button(window, text="Search Entry", width=15, command=searchBook)
+    b2 = Button(window, text="Search 🔎", width=15, command=searchBook,bg="lightblue")
     b2.grid(row=2, column=0)
-    b3 = ttk.Button(window, text="Add Entry", width=15, command=addBook)
+    b3 = Button(window, text="Add ➕", width=15, command=addBook)
     b3.grid(row=3, column=0)
-    b4 = ttk.Button(window, text="Update Selected",
+    b4 = Button(window, text="Update 🔁",
                     width=15, command=updateBook)
     b4.grid(row=4, column=0)
-    b5 = ttk.Button(window, text="Delete Selected",
+    b5 = Button(window, text="Delete🗑️",
                     width=15, command=deleteBook)
     b5.grid(row=5, column=0)
-    b6 = ttk.Button(window, text="Close", width=15, command=window.destroy)
+    b6 = Button(window, text="Close❌", width=15, command=window.destroy,bg="#ff9999")
     b6.grid(row=6, column=0)                
     "---------------------------------BOOK issue----------------------------------"
 
@@ -344,13 +356,19 @@ def guiPy():
         e9.insert(END, sidd[1])
         e0.delete(0, END)
         e0.insert(END, sidd[3])
+    
     def viewData():
         for record in issue_book_tree.get_children():
             issue_book_tree.delete(record)
+        issue_book_tree.tag_configure('oddrow',background="white")
+        issue_book_tree.tag_configure('evenrow',background="#e6e6ff")
         global count1
         count1=0
         for row in backend.viewData():
-            issue_book_tree.insert(parent='',index='end',iid=count1,text="",values=(row))
+            if count1%2==0:
+                issue_book_tree.insert(parent='',index='end',iid=count1,text="",values=(row),tags=('evenrow',))
+            else:
+                issue_book_tree.insert(parent='',index='end',iid=count1,text="",values=(row),tags=('oddrow',))
             count1+=1
 
     def issueBook():
@@ -362,30 +380,26 @@ def guiPy():
             root.destroy()
             root.mainloop()
         else:
-            backend.insertIssue(dateOut.get(), dueDate.get(),
+            backend.insertIssue(dateOut.get(), dateIn.get(),
                 bookId_txt.get(),branchId_txt.get(),card_number.get())
-            list2.delete(0, END)
-            list2.insert(
-                END, (dateOut.get(), dueDate.get(),
+            for record in issue_book_tree.get_children():
+                issue_book_tree.delete(record) 
+            issue_book_tree.insert(parent='',index='end',iid=count,text="",values=(dateOut.get(), dueDate.get(),
                 bookId_txt.get(),branchId_txt.get(),card_number.get()))
-            updateIsBook()
+            viewBook()
             
     def returnBook():
         backend.deleteIssueBook(sidd[2], sidd[3],sidd[4])
         viewData()
         viewBook()
-
-    def updateIsBook():
-        backend.updateIssueBook(bookId_txt.get(),branchId_txt.get(),quantity_txt.get())
-        viewBook()
     
     def searchCard():
-        list2.delete(0,END)
+        for record in issue_book_tree.get_children():
+            issue_book_tree.delete(record)
         for rows in backend.searchCards(card_number.get()):
-            list2.insert(END,rows)
+            issue_book_tree.insert(parent='',index='end',text="",values=(rows))
 
     def checkFine():
-        print(dueDate.get(),dateIn.get())
         date1 = datetime.strptime(dueDate.get(), "%Y-%m-%d").date()
         date2 = datetime.strptime(dateIn.get(), "%Y-%m-%d").date()
         diff=date2-date1
@@ -440,34 +454,31 @@ def guiPy():
     #formate our colums
 
     issue_book_tree.column("#0",width=0,stretch=NO)
-    issue_book_tree.column("dateOut",width=120)
-    issue_book_tree.column("dateIn",width=130)
-    issue_book_tree.column("bookId",width=125)
-    issue_book_tree.column("branchId",width=125)
-    issue_book_tree.column("cardNum",width=125)
+    issue_book_tree.column("dateOut",anchor=CENTER,width=120)
+    issue_book_tree.column("dateIn",anchor=CENTER,width=130)
+    issue_book_tree.column("bookId",anchor=CENTER,width=125)
+    issue_book_tree.column("branchId",anchor=CENTER,width=125)
+    issue_book_tree.column("cardNum",anchor=CENTER,width=125)
 
     #create  headings
 
-    issue_book_tree.heading("#0",text="",anchor="e")
-    issue_book_tree.heading("dateOut",text="DATE OUT",anchor="w")
+    issue_book_tree.heading("#0",text="")
+    issue_book_tree.heading("dateOut",text="DATE OUT",anchor=CENTER)
     issue_book_tree.heading("dateIn",text="DATE IN",anchor=CENTER)
     issue_book_tree.heading("bookId",text="BOOK ID",anchor=CENTER)
     issue_book_tree.heading("branchId",text="BRANCH ID",anchor=CENTER)
     issue_book_tree.heading("cardNum",text="CARD NUMBER",anchor=CENTER)
     issue_book_tree.grid(row=9, column=3,rowspan=6, columnspan=2)
     issue_book_tree.bind("<ButtonRelease-1>",selectRow1)
-    #list2 = Listbox(window,height=10, width=30)
-    #list2.grid(row=9, column=3, rowspan=6, columnspan=2)
+    vsb1 = ttk.Scrollbar(window, orient="vertical", command=book_tree.yview)
 
-    #list2.bind('<<ListboxSelect>>', selectRow1)
-
-    b7 = ttk.Button(window, text="View Data", width=15, command=viewData)
+    b7 = ttk.Button(window, text="View Data 📄", width=15, command=viewData)
     b7.grid(row=10, column=0)
-    b8 = ttk.Button(window, text="Issue Book", width=15, command=issueBook)
+    b8 = ttk.Button(window, text="Issue Book ⬅️", width=15, command=issueBook)
     b8.grid(row=11, column=0)
-    b9 = ttk.Button(window, text="Return Book", width=15, command=returnBook)
+    b9 = ttk.Button(window, text="Return Book ↪️", width=15, command=returnBook)
     b9.grid(row=12, column=0)
-    b9 = ttk.Button(window, text="Search", width=15, command=searchCard)
+    b9 = ttk.Button(window, text="Search 🔎", width=15, command=searchCard)
     b9.grid(row=13, column=0)
     b9 = ttk.Button(window, text="Check", width=8, command=checkFine)
     b9.grid(row=13, column=10)
