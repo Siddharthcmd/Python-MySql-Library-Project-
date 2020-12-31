@@ -484,7 +484,7 @@ def guiPy():
     b9.grid(row=13, column=10)
     window.mainloop()
 
-'''
+
 #---------------------------------Login id block----------------------------------
 def validateLogin():
     if(username.get() == "siddharth" and password.get() == "misraa123"):
@@ -496,6 +496,8 @@ def validateLogin():
 
 
 tkWindow = Tk()
+style = ttk.Style()
+style.theme_use("clam")
 tkWindow.geometry('400x150')
 tkWindow.title('Library Database')
 
@@ -512,5 +514,4 @@ loginButton = ttk.Button(tkWindow, text="Login",
                          command=validateLogin).grid(row=2, column=0)
 
 tkWindow.mainloop()
-'''
-guiPy()
+
