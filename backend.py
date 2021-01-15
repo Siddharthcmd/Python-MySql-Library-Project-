@@ -2,6 +2,8 @@ import pymysql
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox 
+import datetime
+from datetime import timedelta, date,datetime
 def connect():
     mydb = pymysql.connect(host="localhost",
                            user="root", password="test123", database="MainLibraryDatabase")
@@ -174,7 +176,7 @@ def insert(Branch_id,id, title, author, year, publisher,quantity):
         mydb.close()
         return True
     except pymysql.err.IntegrityError as e:
-        if(e.args[0]==1062):
+        if(e.args[0]==1062): 
             mydb.commit()
             mydb.close()        
             errorMessage(1)
@@ -278,10 +280,14 @@ def insertIssue(dateo,ddate,bookId,branchId,cardNumber):
     mydb.close()
 
 
-def deleteIssueBook(BId,BraId,cardNumber):
+def deleteIssueBook(dateout,BId,BraId,cardNumber):
     mydb = pymysql.connect(host="localhost",
                            user="root", password="test123", database="MainLibraryDatabase")
     cur = mydb.cursor()
+    datein=date.today()
+    calcFine = ("call fine('"+str(datein)+"','"+str(dateout)+"')")
+    cur.execute(calcFine)
+    fine=cur.fetchall()
     deleteBook = ("delete from BOOK_LENDING where CARD_NO = '" +
                   str(cardNumber)+"'and BOOK_ID = '" +
                   str(BId)+"' and BRANCH_ID = '" +
@@ -289,6 +295,9 @@ def deleteIssueBook(BId,BraId,cardNumber):
     cur.execute(deleteBook)
     mydb.commit()
     mydb.close()
+    #fine=((30,),) [1,2,3]
+    #((30,),)
+    return fine[0][0]
 
 
 connect()

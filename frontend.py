@@ -3,10 +3,11 @@ import backend
 from tkinter import ttk
 from tkinter import Toplevel, Button, Tk, Menu  
 from tkinter import *
+import tkinter as tk
 from tkinter import messagebox 
 import datetime
 from datetime import timedelta, date,datetime
-
+from ttkthemes import ThemedStyle
 
 def guiPy():
 
@@ -127,6 +128,7 @@ def guiPy():
             viewBranch()  
         
         brawindow = Toplevel(window)
+        brawindow.title('Branch Details')
 
     
         l1 = Label(brawindow, text="Branch Id").grid(row=1,column=5)
@@ -194,6 +196,7 @@ def guiPy():
             viewPublisher()
         
         pubwindow = Toplevel(window)
+        pubwindow.title('Publisher Details')
 
     
         l1 = Label(pubwindow, text="Name").grid(row=1,column=5)
@@ -231,9 +234,13 @@ def guiPy():
     #----------------------------------MAIN WINDOW---------------------------------
     "////////////////////////////////////////////////////////////////////////////////////"
      
-    window = Tk()  
-    style = ttk.Style()
-    style.theme_use("clam")
+    window = tk.Tk() 
+    window.configure(background='#ffe6ff')
+    window.title('Library Database')
+    style = ThemedStyle(window)
+    style.set_theme("clam")
+    #style = ttk.Style()
+    #style.theme_use("clam")
     style = ttk.Style()
 
     def fixed_map(option):
@@ -259,21 +266,21 @@ def guiPy():
   
     menubar.add_cascade(label="View", menu=filemenu) 
     # display the menu  
-    window.config(menu=menubar)  
+    window.config(menu=menubar)  #ffe16f2
 
-    l0 = Label(window,text="Branch_id")
+    l0 = Label(window,text="Branch ID",background="#ffe6ff",font="Courier")
     l0.grid(row=0,column=9)
-    l1 = Label(window, text="bookId")
+    l1 = Label(window, text="Book ID",background="#ffe6ff",font="Courier")
     l1.grid(row=1, column=9)
-    l2 = Label(window, text="Title")
+    l2 = Label(window, text="Title",background="#ffe6ff",font="Courier")
     l2.grid(row=2, column=9)
-    l3 = Label(window, text="Author")
+    l3 = Label(window, text="Author",background="#ffe6ff",font="Courier")
     l3.grid(row=3, column=9)
-    l4 = Label(window, text="Publisher")
+    l4 = Label(window, text="Publisher",background="#ffe6ff",font="Courier")
     l4.grid(row=4, column=9)
-    l5 = Label(window, text="Year")
+    l5 = Label(window, text="Year",background="#ffe6ff",font="Courier")
     l5.grid(row=5, column=9)
-    l6 = Label(window, text="Quantity")
+    l6 = Label(window, text="Quantity",background="#ffe6ff",font="Courier")
     l6.grid(row=6, column=9)
 
     branchId_txt = StringVar()
@@ -328,20 +335,20 @@ def guiPy():
     book_tree.grid(row=1, column=3,rowspan=6, columnspan=6)
     book_tree.bind("<ButtonRelease-1>",selectRow)
     vsb = ttk.Scrollbar(window, orient="vertical", command=book_tree.yview)
-    b1 = Button(window, text="View All Books",
+    b1 = ttk.Button(window, text="View All Books",
                     width=15, command=viewBook)
     b1.grid(row=1, column=0)
-    b2 = Button(window, text="Search 🔎", width=15, command=searchBook,bg="lightblue")
+    b2 = ttk.Button(window, text="Search 🔎", width=15, command=searchBook)
     b2.grid(row=2, column=0)
-    b3 = Button(window, text="Add ➕", width=15, command=addBook)
+    b3 = ttk.Button(window, text="Add ➕", width=15, command=addBook)
     b3.grid(row=3, column=0)
-    b4 = Button(window, text="Update 🔁",
+    b4 = ttk.Button(window, text="Update 🔁",
                     width=15, command=updateBook)
     b4.grid(row=4, column=0)
-    b5 = Button(window, text="Delete🗑️",
+    b5 = ttk.Button(window, text="Delete🗑️",
                     width=15, command=deleteBook)
     b5.grid(row=5, column=0)
-    b6 = Button(window, text="Close❌", width=15, command=window.destroy,bg="#ff9999")
+    b6 = ttk.Button(window, text="Close❌", width=15, command=window.destroy)
     b6.grid(row=6, column=0)                
     "---------------------------------BOOK issue----------------------------------"
 
@@ -380,7 +387,7 @@ def guiPy():
             root.destroy()
             root.mainloop()
         else:
-            backend.insertIssue(dateOut.get(), dateIn.get(),
+            backend.insertIssue(dateOut.get(), dueDate.get(),
                 bookId_txt.get(),branchId_txt.get(),card_number.get())
             for record in issue_book_tree.get_children():
                 issue_book_tree.delete(record) 
@@ -389,36 +396,34 @@ def guiPy():
             viewBook()
             
     def returnBook():
-        backend.deleteIssueBook(sidd[2], sidd[3],sidd[4])
+        fine=backend.deleteIssueBook(sidd[1],sidd[2], sidd[3],sidd[4])
         viewData()
         viewBook()
+        if(fine<=0):
+            e11.delete(0,END)
+            e11.insert(END,"no fine")
+        else:
+            messagebox.showwarning("Collect fine","Collect the fine!")
+            e11.delete(0,END)
+            e11.insert(END,fine)
+
     
     def searchCard():
         for record in issue_book_tree.get_children():
             issue_book_tree.delete(record)
         for rows in backend.searchCards(card_number.get()):
             issue_book_tree.insert(parent='',index='end',text="",values=(rows))
-
-    def checkFine():
-        date1 = datetime.strptime(dueDate.get(), "%Y-%m-%d").date()
-        date2 = datetime.strptime(dateIn.get(), "%Y-%m-%d").date()
-        diff=date2-date1
-        if(diff.days<=0):
-            e11.delete(0,END)
-            e11.insert(END,"no fine")
-        else:
-            e11.delete(0,END)
-            e11.insert(END,diff.days * 5)        
+      
     
-    l7 = Label(window, text="Card Number")
+    l7 = Label(window, text="Card Number",background="#ffe6ff",font="Courier")
     l7.grid(row=9, column=8)
-    l8 = Label(window, text="Date Out")
+    l8 = Label(window, text="Date Out",background="#ffe6ff",font="Courier")
     l8.grid(row=10, column=8)
-    l9 = Label(window, text="Due Date")
+    l9 = Label(window, text="Due Date",background="#ffe6ff",font="Courier")
     l9.grid(row=11, column=8)
-    l10 = Label(window, text="Date In")
+    l10 = Label(window, text="Date In",background="#ffe6ff",font="Courier")
     l10.grid(row=12, column=8)
-    l11 = Label(window, text="Fine")
+    l11 = Label(window, text="Fine",background="#ffe6ff",font="Courier")
     l11.grid(row=13, column=8)
 
 
@@ -449,13 +454,13 @@ def guiPy():
     issue_book_tree =ttk.Treeview(window)
    
     #define our colum
-    issue_book_tree['columns']=("dateOut","dateIn","bookId","branchId","cardNum")
+    issue_book_tree['columns']=("dateOut","duedate","bookId","branchId","cardNum")
 
     #formate our colums
 
     issue_book_tree.column("#0",width=0,stretch=NO)
     issue_book_tree.column("dateOut",anchor=CENTER,width=120)
-    issue_book_tree.column("dateIn",anchor=CENTER,width=130)
+    issue_book_tree.column("duedate",anchor=CENTER,width=130)
     issue_book_tree.column("bookId",anchor=CENTER,width=125)
     issue_book_tree.column("branchId",anchor=CENTER,width=125)
     issue_book_tree.column("cardNum",anchor=CENTER,width=125)
@@ -464,7 +469,7 @@ def guiPy():
 
     issue_book_tree.heading("#0",text="")
     issue_book_tree.heading("dateOut",text="DATE OUT",anchor=CENTER)
-    issue_book_tree.heading("dateIn",text="DATE IN",anchor=CENTER)
+    issue_book_tree.heading("duedate",text="DUE DATE",anchor=CENTER)
     issue_book_tree.heading("bookId",text="BOOK ID",anchor=CENTER)
     issue_book_tree.heading("branchId",text="BRANCH ID",anchor=CENTER)
     issue_book_tree.heading("cardNum",text="CARD NUMBER",anchor=CENTER)
@@ -480,14 +485,12 @@ def guiPy():
     b9.grid(row=12, column=0)
     b9 = ttk.Button(window, text="Search 🔎", width=15, command=searchCard)
     b9.grid(row=13, column=0)
-    b9 = ttk.Button(window, text="Check", width=8, command=checkFine)
-    b9.grid(row=13, column=10)
     window.mainloop()
 
 
 #---------------------------------Login id block----------------------------------
 def validateLogin():
-    if(username.get() == "siddharth" and password.get() == "misraa123"):
+    if(username.get() == "siddharth" and password.get() == "misraa123" or username.get() == "rohit" and password.get() == "rohit" ):
         tkWindow.destroy()
         guiPy()
     else:
@@ -496,8 +499,9 @@ def validateLogin():
 
 
 tkWindow = Tk()
-style = ttk.Style()
-style.theme_use("clam")
+style = ThemedStyle(tkWindow)
+style.set_theme("scidgrey")
+
 tkWindow.geometry('400x150')
 tkWindow.title('Library Database')
 

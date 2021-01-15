@@ -1,5 +1,5 @@
-create database MainLibraryDatabase;
-use MainLibraryDatabase;
+create database LibraryDatabase;
+use LibraryDatabase;
 
 CREATE TABLE PUBLISHER(
 	NAME VARCHAR (20) PRIMARY KEY,
@@ -10,12 +10,16 @@ CREATE TABLE PUBLISHER(
 create table Book (
 	book_id integer primary key,
 	title varchar(20),
-    author varchar(20),
     publisher varchar(20),
     year_of_publish integer,
     foreign key (publisher) references PUBLISHER (NAME) on delete cascade
     );
-    
+
+create table author(
+	bookId integer,foreign key (bookId) REFERENCES Book (book_id) ON DELETE CASCADE,
+    authorName varchar(20)
+    );
+
 create table LibraryBranch(
 	branchId integer primary key,
     branchName varchar(20),
@@ -40,6 +44,13 @@ CREATE TABLE BOOK_LENDING(
 	);
 
 delimiter //
+create procedure fine(IN dd1 date,IN dd2 date)
+	begin
+		select datediff(dd1,dd2)*5 as calcFine;
+	end;//
+delimiter ;
+
+delimiter //
 create trigger decrement
 after insert on BOOK_LENDING
 FOR each row
@@ -48,10 +59,9 @@ UPDATE BOOK_COPIES SET NoOfCopies=NoOfCopies-1 where bookId=new.BOOK_ID and bran
 end;//
 delimiter ;
 
-
 delimiter //
 create trigger increment
-after delete on BOOK_LENDING
+before delete on BOOK_LENDING
 FOR each row
 begin
 UPDATE BOOK_COPIES SET NoOfCopies=NoOfCopies+1 where bookId=old.BOOK_ID and branchId=old.BRANCH_ID;
