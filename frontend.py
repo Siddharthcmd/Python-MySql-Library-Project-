@@ -518,4 +518,3 @@ loginButton = ttk.Button(tkWindow, text="Login",
                          command=validateLogin).grid(row=2, column=0)
 
 tkWindow.mainloop()
-

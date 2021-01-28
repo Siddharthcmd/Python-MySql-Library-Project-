@@ -5,8 +5,11 @@ from tkinter import messagebox
 import datetime
 from datetime import timedelta, date,datetime
 def connect():
-    mydb = pymysql.connect(host="localhost",
-                           user="root", password="test123", database="MainLibraryDatabase")
+    mydb = pymysql.connect(
+        host="localhost",   
+        user="root", 
+        password="test123", 
+        database="MainLibraryDatabase")
     mydb.close()
 
 #--------------------------------------Book copies--------------------------------------
