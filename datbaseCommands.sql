@@ -10,14 +10,10 @@ CREATE TABLE PUBLISHER(
 create table Book (
 	book_id integer primary key,
 	title varchar(20),
+	author varchar(10),
     publisher varchar(20),
     year_of_publish integer,
     foreign key (publisher) references PUBLISHER (NAME) on delete cascade
-    );
-
-create table author(
-	bookId integer,foreign key (bookId) REFERENCES Book (book_id) ON DELETE CASCADE,
-    authorName varchar(20)
     );
 
 create table LibraryBranch(
