@@ -19,7 +19,7 @@ Some snapshots:
         
    ![image](https://user-images.githubusercontent.com/67225894/168861281-858835aa-a93b-4c77-a0cb-825bcaef8d82.png)
                                                             
-                                                            &
+   &
         
    [image](https://user-images.githubusercontent.com/67225894/168861838-186d6e44-adb8-4078-9da0-a08434676abb.png)
 
